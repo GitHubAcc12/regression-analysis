@@ -1,0 +1,145 @@
+---
+title: "Project 1"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd('/Users/jankretschmann/Documents/Master/Milwaukee/Semester 1/Regression Analysis/Homework/')
+```
+
+## Exercise 1
+
+a) Fit MLR model relating number of games won to passing yardage, percentage of rushing plays and opponents rushing yards
+
+(Scatterplot on seperate sheet)
+
+Let $y$ denote the number of games won, $x_1$ the passing yardage, $x_2$ the passing yardage and $x_3$ the opponents rushing yards. The natural model would be $y_i=\beta_0+\beta_1x_1+\beta_2x_2+\beta_3x_3+\epsilon_i$, where the $\epsilon_i$ are iid and $N(0, \sigma^2)$ distributed. R gives an estimated regression equation of
+
+$$\hat{y_i}=-8.209705+0.004217x_{1_i}+0.001617x_{2_i}+0.085945x_{3_i}$$
+
+b) Construct ANOVA Table and test for significance of regression
+
+R gives the ANOVA table:
+
+            Df Sum Sq Mean Sq F value Pr(>F)   
+x.1          1 115.07  115.07  13.251 0.0013 **
+x.2          1   1.91    1.91   0.220 0.6432   
+x.3          1   1.58    1.58   0.182 0.6732   
+Residuals   24 208.40    8.68                  
+
+The average amount of variation between groups is greater than that within groups, which results in a large F value.
+
+Significance of regression:
+We want to test the hypothesis $H_0: \beta_1=\beta_2=\beta_3=0$ vs $H_1: \beta_i \neq 0, i \in \{1, 2, 3\}$ at the 5% significance level. R gives us
+$$SSR=116.9791$$
+$$SSE=1.582708$$
+$$MSR=\frac{SSR}{df_{reg}}=\frac{118.5618}{3}=39.52061$$
+$$MSE=\frac{SSE}{df_{res}}=\frac{208.4025}{24}=8.683436$$
+
+$$F=\frac{MSR}{MSE}=4.551264$$
+We reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship of the number of games won and the teams passing yardage, the percentage of rushing plays and the opponents' rushing yards.
+
+
+c) Calculate t statistics for hypotheses $H_0: \beta_2=0, H_0: \beta_7=0, H_0: \beta_8=0$.
+
+Translated to the naming of betas in this model, we are testing the hypotheses $H_0: \beta_1=0, H_0: \beta_2=0, H_0: \beta_3=0$. The T statistic is constructed as follows:
+
+$$T=|\frac{\hat{\beta_i}}{\sqrt{MSE(X^TX)^{-1}_{1+1, 1+1}}}|$$
+
+For $\beta_1$, we have $MSE(X^TX)^{-1}_{1+1, 1+1}=7.3145e-06$ and $\hat{\beta_1}=0.004216744$, which gives us
+$$T=|\frac{0.004216744}{\sqrt{7.3145e-06}}|=1.559139$$
+So we do not reject $H_0: \beta_1=0$ and conclude that there is no evidence at the 5% level for a linear relationship of the number of games won and the teams passing yardage.
+
+
+For $H_0: \beta_2=0$, we have $MSE(X^TX)^{-1}_{2+1, 2+1}=2.505048e-05$ and $\hat{\beta_2}=0.001617299$, which gives us
+$$T=|\frac{0.001617299}{\sqrt{2.505048e-05}}|=0.3231337$$
+So we do not reject $H_0: \beta_2=0$ and conclude that there is no evidence at the 5% level for a linear relationship of the number of games won and the teams percentage of rush plays.
+
+For $H_0: \beta_3=0$, we have $MSE(X^TX)^{-1}_{3+1, 3+1}=0.04052594$ and $\hat{\beta_3}=0.08594511$, which gives us
+$$T=|\frac{0.08594511}{\sqrt{0.04052594}}|=0.426928$$
+
+So we do not reject $H_0:\beta_3=0$ and conclude that there is no evidence at the 5% level for a linear relationship of the number of games won and the opponents' rushing yards.
+
+All in all, from these tests we can conclude that there is no linear relationship between the model and one predictor alone, which means that only all three predictors combined show a linear relationship to the response. No predictor can be dropped.
+
+d) Calculate $R^2$ and $R_{adj}^2$:
+$$R^2=1-\frac{SSE}{SST}$$
+R gives us $R^2=0.362614$, which means that 36.2614% of the variation in number of games won is explained by the linear relationship between number of games won and passing yardage, percentage of rushing plays and opponents rushing yards.
+
+$$R^2_{adj}=1-(1-R^2)(\frac{n-1}{n-k-1})$$
+R gives us $R^2_{adj}=0.2517643$.
+
+e) Partial F-test for the contribution of $x_7$
+
+We want to test the hypothesis $H_0: \beta_2=0$. The test statistic is constructed as follows: 
+$$F=\frac{SSR(\beta_2|\beta_1, \beta_3)}{MSE}$$
+with the partial regression sum of squares defined as:
+
+$$SSR(\beta_i)=\beta_iX_i^Ty$$
+$$SSR(\beta_2|\beta_1, \beta_3)=SSR-SSR(\beta_1) - SSR(\beta_3)$$
+R gives us $MSE=8.683436$, $SSR(\beta_2|\beta_1, \beta3)=1.910904$, so we get $F=0.2200631$. Based on this, we reject $H_0$ and conclude that there is evidence at the 5% level, that with the teams passing percentage and opponent's rushing yards already accounted for, the percentage of rushing plays is not linearly related to the number of games won.
+
+The F-test is a more general form of the t-test, and the F-statistic takes the increase of the SSR when adding a variable into account (extra sum of squares).
+
+f) We want to show that the square of simple correlation coefficients is equal to $R^2$. For the correlation of the fitted values and the response given in the data ($cor(y, Hy)$ with $H=X(X^TX)^{-1}X^T$ being the hat matrix), R gives us 0.6021744. The squared correlation is 0.362614. 
+
+If we take the difference of $R^2$ and the squared correlation, R gives us $R^2-cor(y, Hy)^2= 3.164136e-14$, which is roughly equal to zero.
+
+
+## Exercise 2
+
+a) Scatterplot on seperate sheet.
+
+Let $y$ denote the the fuel mileage, $x_1$ the engine displacement in cubic inches and $x_2$ the number of carburetor barrels. A natural regression model would be $y_i=\beta_0+\beta_1x_1+\beta_2x_2+\epsilon_i$, where the $\epsilon_i$ are iid and $N(0, \sigma^2)$ distributed.
+
+From R, the estimated regression equation is $\hat{y_i}=28.7293-0.0421x_1 + 1.0426x_2$
+
+b) R gives the ANOVA table:
+            Df  Sum Sq Mean Sq F value   Pr(>F)    
+x.1          1  944.6   944.6 105.276 3.67e-11 ***
+x.2          1   32.7    32.7   3.642   0.0663 .  
+Residuals   29  260.2     9.0  
+
+The average amount of variation between groups is greater than that within groups, which results in a large F value.
+
+c) We want to find a 95% CI for $\beta_1$, which is given by
+$$\hat{\beta_1} \pm t_{0.025, 29}*\sqrt{MSE\cdot (X^TX)^{-1}_{1+1, 1+1}}$$
+
+We have $\hat{\beta_1}=-0.04209612$ and $MSE*(X^TX)^{-1}_{1+1, 1+1}=2.891973e-05$, so for the CI we get
+
+$$-0.04209612 \pm 2.04523*\sqrt{2.891973\cdot10^{-5}}$$
+which gives us a confidence interval of (-0.006781901 mpg, 0.015215390 mpg).
+
+In conclusion, we are 95% confident that an increase of 1 cubic inch in engine displacement increases the fuel mileage by between -0.006781901 MPG and 0.015215390 MPG.
+
+d) We want to compute the test statistics for $H_0: \beta_1=0$ and $H_0: \beta_6=0$. Note that $\beta_6$ is called $\beta_2$ in this model.
+
+The test statistics is constructed as follows:
+$$T=\frac{\hat{\beta_j}}{\sqrt{MSE(X^{T}X)^{-1}_{j+1, j+1}}}$$
+
+The test statistics for $H_0: \beta_1=0$ gives a T value of $5342.302$, whereas the test statistics for $H_0: \beta_2=0$ gives a T value of $-0.07705122$.
+
+Since the T value of the first test is very high, we can conclude, that there is evidence at the 5% level of a linear relationship between the engine displacement and the fuel mileage. 
+The second statistics however is very close to zero, which means there does not seem to be a linear relationship at the 5% level between the number of carburetor barrels and fuel mileage. 
+
+e) We want to find a 95% confidence interval for the mean fuel mileage when $x_1 =275 in^3$ and $x_6=2$ barrels:
+
+The interval is constructed as follows:
+$$\hat{y_0} \pm t_{0.025, 29}\sqrt{MSE·x_0^T(X^TX)^{-1}x_0}$$
+
+We know that $\hat{y_0}=x_{0_i}\beta_i$, so $\hat{y_0}=19.23807$. R gives us $MSE\cdot x^T_0(X^TX)^{-1}x_0=0.7439455$, so we end up with 
+$$19.23807 \pm 2.04523\sqrt{8.973086(0.08290854)}$$
+
+Which leads to the interval (17.47401 mpg, 21.00213 mpg).
+
+In conclusion, we are 95% confident that the mean fuel mileage of a car with an engine displacement of 275 $in^3$ and 2 carburetor barrels is between 17.47401 mpg and 21.00213 mpg.
+
+f) We want to construct a 95% PI for $x_1 =275 in^3$ and $x_2=2$ barrels:
+For predictions, the interval is constructed as
+$$\hat{y}_{0}\pm t_{0.025, 29}\sqrt{MSE(1+x_0^T(X^TX)^{-1}x_0)}$$
+So in our case
+$$19.23807 \pm 2.04523\sqrt{8.973086(1+0.08290854)}$$
+The new expression below the square root is found using R: $MSE(1+x_0^T(X^TX)^{-1}x_0)=9.717032$, which leads to the prediction interval (12.86265 mpg, 25.61349 mpg).
+
+In conclusion, we predict with 95% certainty that the fuel mileage of a car with an engine displacement of 275 $in^3$ and 2 carburetor barrels is between 12.86265 mpg and 25.61349 mpg.

@@ -1,0 +1,488 @@
+---
+title: "Final Project"
+author: "Jan Kretschmann"
+date: "12/13/2019"
+header-includes:
+  - \usepackage{float}
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise 1
+
+a) Looking at figure \ref{fig:scat1}, there appears to be a negative linear relationship the distance a driver can see and the drivers age. 
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/1ascatterplot.png}
+  \caption{Scatterplot}
+  \label{fig:scat1}
+\end{figure}
+
+A natural model would be one that relates the distance a driver can see in feet ($y$) to the drivers age in years ($x$) via the simple linear regression model
+$$y_i=\beta_0+\beta_1x_i+\epsilon_i$$
+where the $\epsilon_i$ are independent and identically distributed $N(0, \sigma^2)$ random variables. 
+
+We want to estimate the regression coefficients. From R, the estimated regression equation is
+
+$$\hat{y}=576.682-3.007x$$
+
+
+b) In this part, we are testing whether a linear relationship between the predictor and the response even exists, thus whether our linear regression model can be deemed significant. We assess the significance of the regression at the 5% level, testing the hypotheses
+$$H_0: \beta_1=0$$
+versus
+$$H_1: \beta_1\neq 0$$
+Since we are testing at the 5% level, the probability of falsely rejecting $H_0$ is only 5%. Our hypotheses are chosen in a way such that we are assuming there is no linear relationship ($H_0: \beta_1=0$) ie. the slope is 0, and we try to prove the opposite. If we end up rejecting our null-hypothesis, we can be 95% sure that we did so rightfully. If we do not reject the null-hypothesis, that does not necessarily mean that there is no linear relationship, just that we were not able to prove the existence of it. We might need a larger data sample to do so.
+
+We have
+$$MSE=2476.215$$
+
+$$S_{xx}=13752$$
+Therefore, our test statistic looks as follows:
+$$|T|=|\frac{\hat{\beta_1}}{\sqrt{MSE/S_{xx}}}|$$
+$$=|\frac{-3.007}{\sqrt{2476.215/13752}}|$$
+$$=7.085955$$
+
+For the T-Test we conducted, we reject $H_0$ if $|T|>t_{.025, 18}$. For the T-Test at the 5% level with 18 degrees of freedom, we get $t_{.025, 18}=2.100922$, so we reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship between the distance a driver can see and his age.
+
+
+c) We want to find a 95% CI for $\beta_1$, which is given by
+$$\hat{\beta_1} \pm t_{0.025, 29}*\sqrt{MSE\cdot (X^TX)^{-1}_{1+1, 1+1}}$$
+
+We have $\hat{\beta_1}=-3.007$ and $MSE*(X^TX)^{-1}_{1+1, 1+1}=0.1800622$, so for the CI we get
+
+$$-3.007 \pm 2.048407*\sqrt{0.1800622}$$
+which gives us a confidence interval of (-3.876051 feet, -2.137620 feet).
+
+In conclusion, we are 95% confident that an increase of 1 year in age decreases the distance a driver can see by between 2.137620 ft and 3.876051 ft.
+
+
+We now want to construct a confidence interval for $E(y|x=37)$.
+We have (taking the intercept into account)
+$$x=(1, 37)^T$$
+We get $\hat{y_0}$ by plugging the new $x$-vector into our model and end up with:
+$$\hat{y_0}=576.682-3.007\cdot 37=465.429$$
+For the complete interval, we still need the T-value at the 1% level with 28 degrees of freedom:
+$$t_{0.005, 28}=2.763262$$
+
+As well as the mean squared error, which is still the same, multiplied with the inverse of the squared predictor vector which was multiplied with the new parameter vector.
+$$MSE\cdot x^T(X^TX)^{-1}x=117.8327$$
+Finally, we get:
+$$\hat{y_0} \pm t_{0.025, 93}\sqrt{MSE\cdot x^T(X^TX)^{-1}x}=465.429\pm 2.763262\sqrt{117.8327}$$
+Which gives us the interval (435.4336 ft, 495.4245 ft). We conclude with 99% confidence, that the average distance a 37 years old driver can see is between 435.4336 ft and 495.4245 ft.
+
+
+Now, we want to predict the value of $y$ for the given set of predictor parameters, which is $x=37$. As for any prediction interval, we have to account for the variance of the error term.
+For the prediction interval, we can reuse all the values we had in the last part except for the expression below the square root, which becomes:
+$$MSE(1+x^T(X^TX)^{-1}x)$$
+to account for the error variance.
+We end up with:
+$$\hat{y_0} \pm t_{0.005, 28}\sqrt{MSE(1+ x^T(X^TX)^{-1}x)}$$
+$$=465.429\pm 2.763262\sqrt{2476.215 \cdot 1.047586}$$
+
+Which gives us the interval (324.6911 ft, 606.1669 ft). We conclude: we predict with 99% certainty, the distance a 37 years old driver can see will be between 324.6911 ft and 606.1669 ft. 
+
+
+d) Now we want to find out whether our dataset contains any influential or leverage points. We inspect the plots of residuals vs each predictor.
+
+Examining in more detail, we begin by focusing on leverage points. We look at the diagonal entries of the hat matrix $X(X^TX)^{-1}X^T$ and define a threshold of $\frac{2p}{n}$, where $p$ is the number of predictors and $n$ is the number of observations, so the threshold will be 
+$$t=\frac{2}{30}$$
+Looking at the hat matrix, we find that there are 15 points which can be deemed leverage points:
+\begin{tabular}{c c c}
+Observation & Age & Distance \\
+1 & 18 & 510 \\
+2 & 20 & 590 \\
+3 & 22 & 560 \\
+4 & 23 & 510 \\
+5 & 23 & 460 \\
+6 & 25 & 490 \\
+7 & 27 & 560 \\
+8 & 28 & 510 \\
+9 & 29 & 460 \\
+25 & 73 & 280 \\
+26 & 74 & 420 \\
+27 & 75 & 460 \\
+28 & 77 & 360 \\
+29 & 79 & 310 \\
+30 & 82 & 360 
+\end{tabular}
+
+
+Next, we want to examine points with high influence. 
+We use Cook's D-statistic to do so, calculating the cooks distance of each point to the line. We define a threshold for influential point as the usual F-statistic with $\alpha=0.5$, 1 and 29 degrees of freedom: 
+$$F_{0.5, 1, 29}=0.4665489$$
+
+We deem a point influential, if its cooks distance is higher than the influence threshold we just defined. So we end up with no influential points.
+
+
+
+e) We want to perform a lack of fit test for our model:
+
+We want to test the hypothesis 
+$$H_0: E(y)=X\beta$$
+versus
+$$H_1: E(y) \neq X\beta$$
+We get the ANOVA-Table:
+\begin{tabular}{c c c c c c c}
+&  Res.Df &  RSS & Df & Sum of Sq & F & Pr(>F) \\
+1 & 28 & 69334 & & & & \\                           
+2 & 1 & 1250 & 27 & 68084 & 2.0173 & 0.5126 \\
+\end{tabular}
+
+So we have $SS_{LOF}=68084$ with 27 degrees of freedom and $SS_{PE}=1250$ with 1 degree of freedom.
+We have the F-statistic $2.0173$ with a P-value of $0.5126$. Since the P-value is greater than $0.05$, we do not reject $H_0$ at the 5% level and conclude that there is no lack of fit to our model.
+
+
+f) 
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/1drf.png}
+  \caption{Residuals vs Fitted Values}
+  \label{fig:1drf}
+\end{figure}
+Looking at Figure \ref{fig:1drf}, the plot of the residuals vs fitted values, we see that the data is scattered randomly around the zero line, which supports our normal assumptions. 
+
+
+In addition to that, looking at the normal probability plot in figure \ref{fig:1enpp}, the points are close to a line with slope 1 through the origin. This also supports the normal assumptions. There are 2 points that are a little further away from the line (bottom left and top right), but since there are only two outliers, there is no transformation that would bring them closer to the line.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/1enpp.png}
+  \caption{Normal Probability Plot}
+  \label{fig:1enpp}
+\end{figure}
+
+
+## Exercise 2
+
+a) 
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/2ascat.png}
+  \caption{Scatterplot Matrix}
+  \label{fig:2ascat}
+\end{figure}
+
+A natural model would be one that relates the average infection risk in a hospital ($y$) to the length of the stay ($x_1$), the frequency of x-ray use ($x_2$) and whether the hospital is in the north-central region ($x_4$), in the south region ($x_3$) or in the west region ($x_5$) via the simple linear regression model
+$$y_i=\beta_0+\beta_1x_{1_i}+\beta_2x_{2_i}+\beta_3x_{3_i}+\beta_4x_{4_i}+\beta_5x_{5_i}+\beta_{13}x_{1_i}x_{3_i}+\beta_{14}x_{1_i}x_{4_i}+\beta_{15}x_{1_i}x_{5_i}+\beta_{23}x_{2_i}x_{3_i}+\beta_{24}x_{2_i}x_{4_i}+\beta_{25}x_{2_i}x_{5_i}\epsilon_i$$
+where the $\epsilon_i$ are independent and identically distributed $N(0, \sigma^2)$ random variables. The variables $x_i$, for  $i=3,4,5$ are indicator variables that only take the value 1 if the hospital is in the specified region, and 0 if it isn't. If all three indicators are 0, we assume that the hospital is in the only region left, which is the north-east region.
+
+See the figure \ref{fig:2ascat} for a plot of the data.
+
+We want to estimate the regression coefficients. From R, the estimated regression equation is
+
+$$\hat{y}=31.867592-0.045352x_1-0.069010x_2+4.695320x_3-3.668557x_4-16.315054x_5$$
+$$-0.061976x_1x_3+0.006755x_1x_4-0.030354x_1x_5+0.044927x_2x_3+0.070259x_2x_4+0.257435x_2x_5$$
+
+We assess the significance of the regression at the 5% level, testing the hypotheses
+$$H_0: \beta_i=0 \forall i \in \{1, 2, 3, 4, 5, 13, 14, 15, 23, 24, 25\}$$
+versus
+$$H_1: \neg H_0$$
+
+We have
+$$MSR=214.6649$$
+$$MSE=124.8923$$
+
+And we construct our F-Statistic from these values:
+$$F=\frac{MSR}{MSE}=\frac{214.6649}{124.8923}=1.7188$$
+We reject $H_0$ if $F > F_{.05, 11, 101}=1.88471$. All in all, we do not reject $H_0$ and conclude that there is no evidence at the 5% level of a linear relationship between infection risk in hospitals and the average length of stay, the frequency of x-ray and in which of the 4 regions the hospital is located.
+
+
+We now want to test for the significance of the interaction terms, testing the hypotheses $H_0: \beta_{ij}=0$, for all combinations of $i$ and $j$ with $i \in \{1, 2\}$ and $j \in \{3, 4, 5\}$.
+
+To perform this test, we need to partition the sum of squares because we only test for the significance of a subset of the predictors.
+Starting with $H_0:\beta_{13}=0$ versus $H_1: \neg H_0$, we have 
+$$SSR(\beta_{13}|\beta_1, \beta_2, \beta_3, \beta_4, \beta_5, \beta_{14}, \beta_{15}, \beta_{23}, \beta_{24}, \beta_{25})=68.3285$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{68.3285}{124.8923}=0.5470995$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we do not reject $H_0$ and conclude that there is no evidence at the 5% level of a linear relationship between the infection risk and the average length of stay based on whether the hospital is located in the north-central region. 
+
+
+Next, we have $H_0:\beta_{14}=0$ versus $H_1: \neg H_0$, we have 
+$$SSR(\beta_{14}|\beta_1, \beta_2, \beta_3, \beta_4, \beta_5, \beta_{13}, \beta_{15}, \beta_{23}, \beta_{24}, \beta_{25})=5.436958$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{5.436958}{124.8923}=0.04353318$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we do not reject $H_0$ and conclude that there is no evidence at the 5% level of a linear relationship between the infection risk and the average length of stay based on whether the hospital is located in the south region. 
+
+
+Next, we have $H_0:\beta_{15}=0$ versus $H_1: \neg H_0$, we have 
+$$SSR(\beta_{15}|\beta_1, \beta_2, \beta_3, \beta_4, \beta_5, \beta_{13}, \beta_{14}, \beta_{23}, \beta_{24}, \beta_{25})=3.889281$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{3.889281}{124.8923}=0.03114108$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we do not reject $H_0$ and conclude that there is no evidence at the 5% level of a linear relationship between the infection risk and the average length of stay based on whether the hospital is located in the west region. 
+
+Next, we have $H_0:\beta_{23}=0$ versus $H_1: \neg H_0$, we have 
+$$SSR(\beta_{23}|\beta_1, \beta_2, \beta_3, \beta_4, \beta_5, \beta_{13}, \beta_{14}, \beta_{15}, \beta_{24}, \beta_{25})=105.5676$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{105.5676}{124.8923}=0.845269$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we do not reject $H_0$ and conclude that there is no evidence at the 5% level of a linear relationship between the infection risk and the frequency of x-ray use, based on whether the hospital is located in the north-central region. 
+
+
+Next, we have $H_0:\beta_{24}=0$ versus $H_1: \neg H_0$, we have 
+$$SSR(\beta_{24}|\beta_1, \beta_2, \beta_3, \beta_4, \beta_5, \beta_{13}, \beta_{14}, \beta_{15}, \beta_{23}, \beta_{25})=107.5731$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{107.5731}{124.8923}=0.8613272$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we do not reject $H_0$ and conclude that there is no evidence at the 5% level of a linear relationship between the infection risk and the frequency of x-ray use, based on whether the hospital is located in the south region. 
+
+Next, we have $H_0:\beta_{25}=0$ versus $H_1: \neg H_0$, we have 
+$$SSR(\beta_{25}|\beta_1, \beta_2, \beta_3, \beta_4, \beta_5, \beta_{13}, \beta_{14}, \beta_{15}, \beta_{23}, \beta_{24})=553.3983$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{553.3983}{124.8923}=4.431005$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship between the infection risk and the frequency of x-ray use, based on whether the hospital is located in the west region or not. 
+
+
+Finally, we want to test for the significance of the remaining predictors.
+
+We start with $x_1$, testing the hypothesis $H_0: \beta_1=0$ vs $H_1: \neg H_0$.
+
+We have
+$$SSR(\beta_{1}|\beta_2, \beta_3, \beta_4, \beta_5, \beta_{13}, \beta_{14}, \beta_{15}, \beta_{23}, \beta_{24}, \beta_{25})=585.5014$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{553.3983}{124.8923}=4.688051$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship between the infection risk and the average length of stay, with the remaining predictors already accounted for in the model. 
+
+
+Next, we look at $x_2$, testing the hypothesis $H_0: \beta_2=0$ vs $H_1: \neg H_0$.
+
+We have
+$$SSR(\beta_{2}|\beta_1, \beta_3, \beta_4, \beta_5, \beta_{13}, \beta_{14}, \beta_{15}, \beta_{23}, \beta_{24}, \beta_{25})=13.70089$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{13.70089}{124.8923}=0.1097017$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we do not reject $H_0$ and conclude that there is no evidence at the 5% level of a linear relationship between the infection risk and the frequency of x-ray use, with the remaining predictors already accounted for in the model. 
+
+
+Next, we look at $x_3$, testing the hypothesis $H_0: \beta_3=0$ vs $H_1: \neg H_0$.
+
+We have
+$$SSR(\beta_{3}|\beta_1, \beta_2, \beta_4, \beta_5, \beta_{13}, \beta_{14}, \beta_{15}, \beta_{23}, \beta_{24}, \beta_{25})=616.7129$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{616.7129}{124.8923}=4.937958$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we reject $H_0$ and conclude that there is evidence at the 5% level, that whether the hospital is located in the north-central region or not has significant impact on the regression.
+
+
+Next, we look at $x_4$, testing the hypothesis $H_0: \beta_4=0$ vs $H_1: \neg H_0$.
+
+We have
+$$SSR(\beta_{4}|\beta_1, \beta_2, \beta_3, \beta_5, \beta_{13}, \beta_{14}, \beta_{15}, \beta_{23}, \beta_{24}, \beta_{25})=142.4915$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{142.4915}{124.8923}=1.140915$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we do not reject $H_0$ and conclude that there is no evidence at the 5% level, that whether the hospital is located in the south region or not has significant impact on the regression.
+
+
+Next, we look at $x_5$, testing the hypothesis $H_0: \beta_5=0$ vs $H_1: \neg H_0$.
+
+We have
+$$SSR(\beta_{5}|\beta_1, \beta_2, \beta_3, \beta_4, \beta_{13}, \beta_{14}, \beta_{15}, \beta_{23}, \beta_{24}, \beta_{25})=158.7135$$
+$$MSE=124.8923$$
+Therefore, our test statistic is
+$$F=\frac{158.7135}{124.8923}=1.270803$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 101}=3.935189$. So we do not reject $H_0$ and conclude that there is no evidence at the 5% level, that whether the hospital is located in the west region or not has significant impact on the regression.
+
+Concluding our analysis of the significance of the regression and each predictor/interaction, we can say that the only significant predictors are the average length of the stay, whether the hospital is located in the north region and the frequency of x-ray use based on whether the hospital is located in the west region.
+
+c) Dropping all the terms we just deemed insignificant, we end up with the model:
+$$y_i=\beta_0+\beta_1x_{1_i}+\beta_3x_{3_i}+\beta_{25}x_{2_i}x_{5_i}+ \epsilon_i$$
+with $\epsilon_i$ independent and $N(0, \sigma^2)$ distributed.
+From R, the estimated regression equation is
+$$\hat{y}=30.74440-0.06528x_1+3.78158x_3+0.20930x_2x_5$$
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/2cresfit.png}
+  \caption{Residuals vs Fitted Values}
+  \label{fig:2cresfit}
+\end{figure}
+
+Looking figure \ref{fig:2cresfit}, the data points are scattered randomly around the zero line, which does not indicate a violation of the normal assumptions.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/2crespred1.png}
+  \caption{Residuals vs Average Length of Stay}
+  \label{fig:2crespred1}
+\end{figure}
+
+The plot in figure \ref{fig:2crespred1} also supports the normal assumptions, since the data points are again scattered randomly around the zero line.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/2cresx3.png}
+  \caption{Residuals vs Indicator Hospital in North Region}
+  \label{fig:2cresx3}
+\end{figure}
+
+The second predictor is an indicator variable, but still it is visible in figure \ref{fig:2cresx3} that for both value 1 and value 0 the residual values are scattered randomly around the zero line.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/2cresinterac.png}
+  \caption{Residuals vs Interaction Term}
+  \label{fig:2cresinterac}
+\end{figure}
+
+Figure \ref{fig:2cresinterac}, which shows the residuals plotted against the interaction term $x_2x_5$ however, shows a slight cone-shape to the right. This would indicate a violation of our normal assumptions.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/2cresxray.png}
+  \caption{Residuals vs Frequency of X-Ray Use}
+  \label{fig:2cresxray}
+\end{figure}
+
+The plot of the residuals vs the frequency of x-ray use (figure \ref{fig:2cresxray}) also shows no violation of the normal assumptions. The slope value calculated for this predictor is added to the estimated response only if the hospital is located in the west region, but it still does not seem to violate the normal assumptions.
+
+
+## Exercise 3
+
+a) 
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/3sc.png}
+  \caption{Scatterplot}
+  \label{fig:3sc}
+\end{figure}
+
+Looking at figure \ref{fig:3sc}, which plots the length against the age, the data set is discrete. However, we want to fit a continuous model to the data. Looking at the concentrations and variance of the points in the plot, we see that the increase in length is very high from year 1 through year 3. After that however, the growth of the bluegill slows down. 
+These observations suggest the idea, that a well-fitting model might be a polynomial of grade 3, shifted to the right with a positive y-intercept, for example
+$$y=(x-5)^3+500$$
+which is plotted in figure \ref{fig:3estim}. This also shows a rapid growth in the first steps but a stagnation after that.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/3estim.png}
+  \caption{Grade 3 Polynomial}
+  \label{fig:3estim}
+\end{figure}
+
+Translating this thought into a model, the natural model equation would be:
+$$y_i=\beta_0+\beta_1x_i^3 + \beta_2x_i^2 + \beta_3x_i + \epsilon_i$$
+where the $\epsilon_i$ are independent and $N(0, \sigma^2)$ distributed.
+
+From R, the estimated regression equation after centering the predictor values is
+$$\hat{y}=147.6025+0.1279x^3-4.6438x^2+19.4461x$$
+
+b) We want to test for the significance of higher-order terms in the model.
+First, we test the hypothesis 
+$$H_0: \beta_1=0$$
+versus
+$$H_1: \neg H_0$$
+We have to partition the sum of squares again, giving us
+$$SSR(\beta_1|\beta_2, \beta_3)=25406.72$$
+$$MSE=120.4825$$
+So we get the F-Statistic
+$$F=\frac{25406.72}{120.4825}=210.8748$$
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 74}=3.97023$. So we reject $H_0$ and conclude that there is no evidence at the 5% level, that the length of a bluegill has a polynomial relationship of grade 3 to its age.
+
+
+Next up, we test for the significance of the quadratic term, using the hypothesis:
+$$H_0: \beta_2=0$$
+versus
+$$H_1: \neg H_0$$
+
+We have
+$$SSR(\beta_2|\beta_1, \beta_3)=1856.339$$
+
+$$MSE=120.4825$$
+So we get the F-Statistic
+$$F=\frac{1856.339}{120.4825}=15.40754$$
+
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 74}=3.97023$. So we reject $H_0$ and conclude that there is no evidence at the 5% level, that the length of a bluegill has a quadratic relationship to its age.
+
+c) Now we want to find out whether our dataset contains any influential or leverage points. 
+
+We begin by focusing on leverage points. We look at the diagonal entries of the hat matrix $X(X^TX)^{-1}X^T$ and define a threshold of $\frac{2p}{n}$, where $p$ is the number of predictors and $n$ is the number of observations, so the threshold will be 
+$$t=\frac{6}{78}$$
+Looking at the hat matrix, we find that there are 3 points which can be deemed leverage points:
+
+\begin{tabular}{c c c}
+Observation & Age & Length \\
+1 & 1 & 67 \\
+2 & 1 & 62 \\
+74 & 6 & 170
+\end{tabular}
+
+Next, we want to examine points with high influence. 
+We use Cook's D-statistic to do so, calculating the cooks distance of each point to the line. We define a threshold for influential point as the usual F-statistic with $\alpha=0.5$, 3 and 75 degrees of freedom: 
+$$F_{0.5, 3, 75}=0.7958832$$
+
+We deem a point influential, if its cooks distance is higher than the influence threshold we just defined. So we end up with no influential points.
+
+Fitting the model without the leverage and influential points gives the estimated regression equation:
+$$\hat{y}=148.695+1.482x^3-4.802x^2+16.840x$$
+
+
+d) Investigating for violations of the normal assumptions, we want to keep in mind that we centered our predictor values to create a polynomial regression equation, which will explain negative predictor values later on. 
+
+
+We first take a look at the plot of residuals vs fitted values, seen in figure \ref{fig:3dresfit}. We can see two outliers with a relatively low fitted value close to 60, but other than that the data seems to be randomly scattered along the zero line, which would support the normal assumptions.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/3dresfit.png}
+  \caption{Residuals vs Fitted Values}
+  \label{fig:3dresfit}
+\end{figure}
+
+Looking at the normal probability plot in figure \ref{fig:3dnpp} however, the data does not follow the line quite perfectly. The data points do not look like a straight line with slope 1, which would indicate a violation of our normal assumptions.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/3dnpp.png}
+  \caption{Normal Probability Plot}
+  \label{fig:3dnpp}
+\end{figure}
+
+Examining the figure \ref{fig:3drescubed}, we see 3 outliers, 2 with a fitted value of below -15 and 1 with a fitted value of above 10. Taking these into account, there is possibly an opening cone-shape from left to center and a closing cone shape from center to right, but since these are only 3 out of 80 points, and all the other ones are scattered randomly around zero, the plot does not seem to suggest any violations of our normal assumptions.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/3drescubed.png}
+  \caption{Residuals vs Cubed Predictor}
+  \label{fig:3drescubed}
+\end{figure}
+
+Similar things are true for figure \ref{fig:3dressq}, which also shows 3 outliers that could indicate a cone shape. The other points are scattered randomly arount 0, but with the three points on the right being much closer to zero a cone shape could be even more obvious here. This would indicate a violation of our normal assumptions. However, this is most likely due to the fact that squaring the predictor eliminates negative values, leading to all the outliers being on the same side. 
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/3dressq.png}
+  \caption{Residuals vs Squared Predictor}
+  \label{fig:3dressq}
+\end{figure}
+
+Figure \ref{fig:3dresx}, which just shows the non-squared or -cubed predictor against the fitted values does not suggest a violation of the normal assumptions. The data is scattered randomly around the zero line. There are also 3 outliers again, similar to the other plots of predictors versus residuals, but they do not stand out as much.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[height=250pt,width=\linewidth]{./graphics/3dresx.png}
+  \caption{Residuals vs Predictor}
+  \label{fig:3dresx}
+\end{figure}

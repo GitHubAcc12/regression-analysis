@@ -1,0 +1,106 @@
+---
+title: "Project 2"
+author: "Jan Kretschmann"
+date: "11/18/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Project 2
+
+a) Looking at the attached plot "Normal Probability Plot Residuals", there does not seem to be any issue with the normal assumptions. All the points are roughly along a line of slope 1 and intercept zero, which is exactly what we are looking for to confirm our model assumptions.
+
+b) See the attached plot "Residuals vs Fitted values 1": The plot shows all the points quite randomly scattered around the zero line. This confirms our conclusion from part a), meaning it also supports the normal assumptions. There is no visible relationship, thus there is no need to perform any transformations in order to persevere the normal assumptions.
+
+c) Looking at the plots of residuals vs each of the predictors, there is no visible relationship for any of the predictors to the residuals. This implies that there is no transformation necessary on the predictors, thus that they are correctly specified.
+
+d) The studentized residuals convey the estimated error of the regression without the $i^{th}$ observation. So to get the studentized residual $r_i$, a new regression model is computed without the $i^{th}$ entry in the data set, and then the result $\hat{y_i}$ is subtracted from the actual response $y_i$ given in the data set. The result is divided by the estimated standard deviation. 
+Studentized residuals are a measure for outliers, if the residual for datapoint $i$ has a student residual $>3$, it can be considered an outlier.
+
+## Exercise 2
+
+a) A natural model would be one that relates abrasion index ($y$) to hydrated silica level ($x_1$), the saline coupling agent level ($x_2$) and the sulfur level ($x_3$) via the linear regression model
+$$y_i=\beta_0+\beta_1x_{1_i}+\beta_2x_{2_i}+\beta_3x_{3_i}+\epsilon_i$$
+
+where the $\epsilon_i$ are independent and identically distributed $N(0, \sigma^2)$ random variables. The attached figure "Scatterplot Exercise 2a" indicates a positive linear relationship between these two variables.
+
+We want to estimate the regression coefficients. From R, the estimated regression equation is
+$$\hat{y_i}=0.237830+0.005951x_{1_i}+0.003157x_{2_i}-0.330808x_{3_i}$$
+
+we are testing whether a linear relationship between the predictor and the response even exists, thus whether our linear regression model can be deemed significant. We assess the significance of the regression at the 5% level, testing the hypotheses
+$$H_0: \beta_1=\beta_2=\beta_3=0$$
+versus
+$$H_1: \beta_i \neq 0, i \in \{1,2,3\}$$
+
+We have
+$$MSR=75.90622$$
+$$MSE=4.135235$$
+
+And we construct our F-Statistic from these values:
+$$F=\frac{MSR}{MSE}=\frac{75.90622}{4.135235}=18.35596$$
+
+We reject $H_0$ if $F > F_{.05, 3, 24}=3.008787$. All in all, we reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship between the abrasion index for a tire tread compound and the hydrated silica level, the saline coupling agent level and the sulfur level.
+
+Since the regression is significant at the 5% level, we now want to test for the significance of each of the predictors individually, with the other two already accounted for in the model. So, we test the hypotheses
+$$H_0: \beta_i=0$$
+versus
+$$H_1: \beta_i \neq 0, \forall i \in \{1, 2, 3\}$$
+
+To perform this test, we need to partition the sum of squares because we only test for the significance of a subset of the predictors.
+
+We start with the significance of the hydrated silica level:
+We have 
+$$SSR(\beta_1|\beta_2, \beta_3)=115.0682$$
+$$MSE=4.135235$$
+Therefore, our test statistic is
+$$F=\frac{SSR(\beta_1|\beta_2, \beta_3)}{MSE}=\frac{115.0682}{4.135235}=27.82628$$
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 24}=4.259677$. So we reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship between the abrasion index for a tire tread compound and the hydrated silica level, even with the saline coupling agent level and the sulfur level already accounted for in the model.
+
+We continue with the significance of the saline coupling agent level:
+We have 
+$$SSR(\beta_2|\beta_1, \beta_3)=83.34298$$
+$$MSE=4.135235$$
+Therefore, our test statistic is
+$$F=\frac{SSR(\beta_2|\beta_1, \beta_3)}{MSE}=\frac{83.34298}{4.135235}=20.15435$$
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 24}=4.259677$. So we reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship between the abrasion index for a tire tread compound and the saline coupling agent level, even with the hydrated silica level and the sulfur level already accounted for in the model.
+
+At last, the significance of the sulfur level:
+We have 
+$$SSR(\beta_3|\beta_1, \beta_2)=29.30746$$
+$$MSE=4.135235$$
+Therefore, our test statistic is
+$$F=\frac{SSR(\beta_3|\beta_1, \beta_2)}{MSE}=\frac{29.30746}{4.135235}=7.087256$$
+We reject $H_0$ at the 5% level, if $F > F_{0.05, 1, 24}=4.259677$. So we reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship between the abrasion index for a tire tread compound and the sulfur level, even with the hydrated silica level and the saline coupling agent level already accounted for in the model.
+
+Finally, we want to perform a residual analysis to check for violations of our normal assumptions.
+
+Looking at the attached scatterplot "Residuals vs Fitted Values 2", we can see that the data is scattered randomly around the zero line with 1 possible outlier on the top right.
+There is no visible relationship between the fitted values and the residuals, so we it does not seem to be necessary to perform any transformations on $y$. 
+This is also confirmed by the normal probability plot "Normal Probability Plot 2", which shows a decent line with about the slope one that passes through the origin, which also supports our normal assumptions.
+
+Furthermore, we plot the datapoints of $x_1$, which in our case was the hydrated silica level, against the residuals. This can be seen in the plot "Hydrated Silica Level vs Residuals". This plot, similarly as the last ones, supports our normal assumptions, because the data is again randomly scattered around zero with one possible outlier on the top right. There is no visible relationship that would indicate a violation of our normal assumptions.
+
+Moreover, similar things apply to the next plot. We plot the datapoints of $x_2$, which in our case was the saline coupling agent level versus the residuals. This can be seen in the plot "Saline Coupling Agent Level vs Residuals". This plot shows, similar to the other ones, no relationship between the saline coupling agent level and the residuals, so there is no indication of a violation of our normal assumptions. There is again one point that strikes as a possible outlier, but the rest of the data is scattered randomly around zero.
+
+At last, we take a look at the next plot, "Sulfur Level vs Residuals", which shows the given values of $x3$ plotted against the residuals. This plot looks similar to the rest of the analyzed plots, with one possible outlier on the top right and no striking indications at violations of our normal assumptions. 
+
+
+b) We want to perform a lack of fit test for our model:
+
+We want to test the hypothesis 
+$$H_0: E(y)=X\beta$$
+versus
+$$H_1: E(y) \neq X\beta$$
+We have:
+$$SS_{LF}=265.01$$
+with 1 degrees of freedom, and 
+$$SS_{PE}=1359.3$$
+with also 9 degrees of freedom for the residuals, so we get
+
+$$F=\frac{\frac{SS_{LF}}{df}}{\frac{SS_{PE}}{df_{res}}}=1.7546$$
+
+We reject $H_0$ at the 5% level, if $F > F_{1, 9, 0.05}=5.117355$. So we do not reject $H_0$ and conclude that there is no evidence at the 5% level that our model is a poor fit to the data.
+

@@ -1,0 +1,251 @@
+---
+title: "Project 3"
+author: "Jan Kretschmann"
+date: "12/7/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Project 3
+
+### Exercise 1
+a) See the attached scatterplot "Number of Bacteria vs Exposure Time". The straight line model does not seem appropriate, the relationship seems to be rather logarithmic than linear.
+
+b) A straight-line model would be one that relates Number of Bacteria ($y$) to minutes of exposure to 300 °F ($x_1$) via the linear regression model
+$$y_i=\beta_0+\beta_1x_i+\epsilon_i$$
+
+
+where the $\epsilon_i$ are independent and identically distributed $N(0, \sigma^2)$ random variables. 
+
+The estimated regression equation is
+$$\hat{y}=142.20+-12.48x$$
+
+
+The attached plots support the thought that a straight-line model would not be appropriate for this data. Looking at the plot of the Residuals vs Fitted values ("Residuals vs Fitted values 1"), the residuals do not seem to be randomly scattered around the zero line. At first they seem to decrease, with having one big outlier on the far right. The Normal Probability Plot also shows a violation of the normal assumption, the data is already not really scattered along a line with slope 1, in addition to that the major outlier on the right indicates a violation of the normal assumptions. 
+
+
+c) As pointed out in part a), the relationship seems to be rather logarithmic than linear. Transforming the response gives the model
+$$log(y)=\beta_0+\beta_1x_i+\epsilon_i$$
+with $\epsilon_i$ iid and $N(0, \sigma^2)$ distributed.
+From R, the estimated regression equation is
+$$log(\hat{y})=5.3388-0.2362x_i$$
+
+Carrying out a residual analysis on this model shows a more linear relationship between the predictor and the transformed response. The plot "Residuals vs Fitted values 1c" shows that the residuals are randomly scattered around zero, which supports the normal assumptions.
+Additionally, the normal probability plot ("Normal Probability Plot Residuals 1c") shows the data almost along a straight line with slope 1, which further supports the normal assumptions. 
+
+We can conclude that our transformation is appropriate, and continue to analyze the model obtained under the transformed response.
+
+The scatterplot "Transformed Number of Bacteria vs Exposure Time" shows a negative linear relationship between the transformed response and the predictor.
+
+We assess the significance of the regression at the 5% level, testing the hypotheses
+$$H_0: \beta_1=0$$
+versus
+$$H_1: \neg H_1$$
+
+We have
+$$MSR=7.976139$$
+$$MSE=0.01449343$$
+
+And we construct our F-Statistic from these values:
+$$F=\frac{MSR}{MSE}=\frac{7.976139}{0.01449343}=550.3279$$
+We reject $H_0$ if $F > F_{.05, 1, 10}=4.964603$. All in all, we reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship between the logarithm of the number of bacteria and the time of exposure to 300°F.
+
+
+
+### Exercise 2
+
+a) A straight-line model would be one that relates average number of defects per 10,000 bottles due to stones ($y$) to the number of weeks since the last furnace overhaul ($x_1$) via the linear regression model
+$$y_i=\beta_0+\beta_1x_i+\epsilon_i$$
+
+
+where the $\epsilon_i$ are independent and identically distributed $N(0, \sigma^2)$ random variables. 
+
+The estimated regression equation is
+$$\hat{y}=-31.698+7.277x$$
+
+The scatterplot "Average Defects vs Weeks since Overhaul" suggests an exponential relationship between the predictor and the response, rather than a linear one.
+
+The normal probability plot "Normal Probability Plot Residuals 2a" suggests a violation of the normal assumptions, since the data does not seem to be scattered along a line with slope 1, but a steeper one.
+Additionally, the plots "Residuals vs Fitted values 2a" and "Residuals vs Predictor 2a" show a negative linear or quadratic relationship for at least the first 6 entries. This also indicates a violation of the normal assumptions and suggests that a transformation is necessary to achieve an appropriate model.
+
+b) Since the predictor and the response seem to be exponentially related, taking the logarithm of the response seems to be an appropriate transformation. As seen in the scatterplot "Transformed average defects vs weeks since overhaul", after taking the logarithm of the response, the data shows a much stronger, positive linear relationship. 
+Additionally, the plot of fitted values vs residuals is scattered randomly around zero, indicating no violations of the normal assumptions.
+
+There is one observation, showing log(defects) to be at about 3 after 10 weeks since the last overhaul, which might be an influential point.
+We examine the observed data set for influential and leverage points. We begin by focusing on leverage points. We look at the diagonal entries of the matrix $X(X^TX)^{-1}X^T$ and define a threshold of $\frac{2p}{n}$, where $p$ is the number of predictors and $n$ is the number of observations, so the threshold will be 
+$$t=\frac{2}{14}$$
+Looking at the diagonal entries of the matrix, we see no entry that is greater than our threshold, so we do not have any leverage points.
+
+
+Next, we want to examine points with high influence. 
+We use Cook's D-statistic to do so, calculating the cooks distance of each point to the line. We define a threshold for influential point as the usual F-statistic with $\alpha=0.5$, 2 and 12 degrees of freedom: 
+$$F_{0.5, 5, 24}=0.7347723$$
+
+Looking at the cooks distance for each of the points, we find that none of them exceeds our threshold. Thus, no point from the observations is influential.
+
+
+
+## Exercise 3
+
+A natural model that relates Heat Flux ($y$) to Insulation ($x_1$), East Position ($x_2$), South Position ($x_3$), North Position ($x_4$) and Time of Day ($x_5$) would be the linear regression model
+$$y_i=\beta_0+\beta_1x_{1_i}+\beta_2x_{2_i}+\beta_3x_{3_i}+\beta_4x_{4_i}+\beta_5x_{5_i}+\epsilon_i$$
+
+
+where the $\epsilon_i$ are independent and identically distributed $N(0, \sigma^2)$ random variables. 
+
+From R, the estimated regression equation is
+$$\hat{y}=501.15727+0.09141x_{1}+0.98699x_{2}-0.40900x_{3}-25.49795x_{4}+6.43626x_{5}$$
+
+We assess the significance of the regression at the 5% level, testing the hypotheses
+$$H_0: \beta_1=\beta_2=\beta_3=\beta_4=\beta_5=0$$
+versus
+$$H_1: \neg H_0$$
+
+We have
+$$MSR=2554.939$$
+$$MSE=82.92322$$
+
+And we construct our F-Statistic from these values:
+$$F=\frac{MSR}{MSE}=\frac{2554.939}{82.92322}=30.8109$$
+We reject $H_0$ if $F > F_{.05, 5, 23}=2.639999$. All in all, we reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship between heat flux, insolation, east position, south position, north position and time of day.
+
+Now we want to find out whether our dataset contains any influential or leverage points. We inspect the plots of residuals vs each predictor.
+
+In the plot of "Residuals vs Insolation 3a", we can see 4 points that are possibly influential, one which lies at a residual value of $>20$ and 3 which are at residual values between $-10$ and $-15$. There is also one point that strikes as a possible leverage point, which is at an insolation value of about $550$.
+
+The plot "Residuals vs East Position 3a" shows 5 points that are possibly influential: 4 of these have a residual value of about $12$, one has a residual value of over $20$. There are 4 points that strike as possible leverage points: with east positions of $31$, $32$, $37$ and $38$.
+
+The plot "Residuals vs South Position 3a" shows 5 points that are possibly influential: 3 at residual values of about $12$, one at a residual value of about $22$ and one at a residual value of about $-16$.
+Regarding leverate points, there are only 2 observations that strike as possibilities: one with a south position of 26 and one with a south position of 40.
+
+In the plot "Residuals vs North Position 3a" we see 3 observations that strike as possible influential points, with Residual values of about $21$, $-14$ and $-13$. The latter 2 could also have high leverge, since they are at north positions of $18.5$ and $19$.
+
+The last plot, "Residuals vs Time of Day 3a" shows 3 observations that could be influential, with residual values of $22$, $-13$ and $-14$. There data data is pretty randomly scattered regarding the time of day values, so there are no observations that strike as high leverage from this plot.
+
+Examining in more detail, we begin by focusing on leverage points. We look at the diagonal entries of the hat matrix $X(X^TX)^{-1}X^T$ and define a threshold of $\frac{2p}{n}$, where $p$ is the number of predictors and $n$ is the number of observations, so the threshold will be 
+$$t=\frac{10}{29}$$
+Looking at the hat matrix, we find that there are 4 points which can be deemed leverage points:
+\begin{tabular}{c c c c c c c}
+Observation & Heat Flux & Insolation & East Position & South Position & North Position & Time of Day \\
+4 & 230.7 & 827.80 & 33.13 & 32.52 & 17.50 & 10.53 \\
+16 & 240.4 & 711.85 & 31.08 & 37.71 & 17.37 & 15.56 \\
+22 & 254.5 & 704.70 & 37.82 & 26.26 & 17.62 & 15.38 \\
+25 & 227.5 & 653.10 & 35.56 & 31.84 & 16.51 & 10.58 
+\end{tabular}
+
+
+Next, we want to examine points with high influence. 
+We use Cook's D-statistic to do so, calculating the cooks distance of each point to the line. We define a threshold for influential point as the usual F-statistic with $\alpha=0.5$, 5 and 24 degrees of freedom: 
+$$F_{0.5, 5, 24}=0.8952644$$
+
+We deem a point influential, if its cooks distance is higher than the influence threshold we just defined. So we end up with only one influential point, being:
+
+\begin{tabular}{c c c c c c c}
+Observation & Heat Flux & Insolation & East Position & South Position & North Position & Time.of.Day \\
+22 & 254.50 & 704.70 & 37.82 & 26.26 & 17.62 & 15.38 
+\end{tabular}
+
+Now, constructing the model after removing the influential point from our data set, we end up with the estimated regression equation
+$$\hat{y}=408.82954+0.05595x_1+1.27014x_2+3.60586x_3-24.18353x_4+2.20337x_5$$
+We want to asses the significance of the new model at the 5% level, again testing $H_0: \beta_i=0, \forall i$ versus $H_1: \neg H_0$.
+
+The new model has:
+$$MSE=54.71743$$
+
+$$MSR=2690.732$$
+So we get the F statistic:
+$$F=\frac{MSR}{MSE}=49.17505$$
+
+We reject $H_0$ at the 5% level if $F>F_{0.05, 5, 22}=2.661274$. So we reject $H_0$ and conclude that there is evidence at the 5% level of a linear relationship between heat flux, insolation, east position, south position, north position and time of day. 
+Additionally, we can see that the F-statistic without the influential point in the data set has a much higher value than the F-statistic of the model which included the influential point, $F_{old}=30.8109$ versus $F_{new}=49.17505$. We see, that without the influential point, the model constructed fits the data much better.
+
+
+## Exercise 4
+
+a) Looking at the Scatterplot "Weight vs Months since production", the data appears to be in a quadratic relationship. A natural, second order polynomial model that relates rocket propellant weight ($y$) to weeks since production ($x_1$) would be the regression model
+$$y_i=\beta_0+\beta_1x_i^2+\beta_2x_i+\epsilon_i$$
+where the $\epsilon_i$ are independent and identically distributed $N(0, \sigma^2)$ random variables. 
+
+From R, the estimated regression equation is
+$$\hat{y}=33.6536+0.6802x^2+7.2767x$$
+
+b) We want to assess the significance of the regression at the 5% level, testing the hypotheses
+$$H_0: \beta_1=\beta_2=0$$
+versus
+$$H_1: \neg H_0$$
+
+We have the ANOVA-Table:
+
+\begin{tabular}{c c c c c c}
+ & Df & Sum Sq & Mean Sq & F value  &  Pr(>F) \\ 
+$x$ & 1 & 12046 & 12046 & 185.32 & 3.15e-08 \\
+$x^2$ & 1 & 1347 & 1347 & 20.73 & 0.000826 \\
+Residuals & 11 & 715 & 65 \\
+\end{tabular}
+
+So we have $MSE=65.00286$, $MSR=6696.799$. We get the F-Statistic
+$$F=\frac{MSR}{MSE}=103.0231$$
+We reject $H_0$ for $F>F_{0.05, 2, 11}=3.982298$. So we reject $H_0$ and conclude that there is evidence at the 5% level of a second order polynomial relationship between the weight of a solid-fuel rocket propellant and its age in weeks (weeks passed since production).
+
+c) In the next step, we want to investiage the quadratic term. We test the hypotheses 
+$$H_0: \beta_2=0$$
+versus
+$$H_1: \neg H_0$$
+
+To compute the new test statistic, we need to partition the sum of squares:
+$$SSR(\beta_2|\beta_1, \beta_0)=SSR-SSR(\beta_1)=1347.379$$
+$$df(\beta_2|\beta_1, \beta_0)=1$$
+$$MSR(\beta_2|\beta_1,\beta_0)=\frac{SSR(\beta_2|\beta_1, \beta_0)}{df(\beta_2|\beta_1, \beta_0)}=1347.379$$
+The MSE does not change, so we get the F-Statistic
+$$F=\frac{1347.379}{65.00286}=20.728$$
+
+We reject $H_0$ at the 5% level, if $F>F_{0.05, 1, 11}=4.844336$. So we reject $H_0$, and conclude that there is evidence at the 5% level that "weeks passed since production" has a quadratic relationship to rocket propellant weight, so the quadratic term should be included in the model.
+
+d) Extrapolation in this model is even more dangerous than in a linear model, since the curving leads to a continuously varying slope. Therefore, the relationship between predictor and response might differ drastically outside the range of the observed data.
+
+e) Looking at the plot of residuals vs fitted values ("Residuals vs Fitted values 4"), the data seems to be scattered randomly around the zero line, which does not indicate a violation of our normal assumptions. 
+
+The plot "Residuals vs linear predictor 4" shows a similar result, with the data randomly scattered around zero, supporting the normal assumptions.
+
+The plot of "Residuals vs quadratic predictor 4", however, shows a slightly cone-shaped form, with the points getting closer to the zero line as the predictor values grow. This would indicate a violation of our normal assumption, which can also be seen in the normal probability plot "Normal Probability Plot Residuals 4", because the points are not all quite close to a line with slope one.
+
+
+
+## Exercise 5
+
+a) A natural model that relates fuel mileage ($y$) to engine displacement ($x_1$) and type of transmission ($x_2$) would be the regression model
+$$y_i=\beta_0+\beta_1x_{1_i}+\beta_2x_{2_i}+\epsilon_i$$
+where the $\epsilon_i$ are independent and identically distributed $N(0, \sigma^2)$ random variables. 
+
+From R, the estimated regression equation is
+$$\hat{y}=28.75544-0.03477x_1+4.86706x_2$$
+We want to asses the significance for $\beta_2$ at the 5% level, testing the hypotheses
+$$H_0: \beta_2=0$$
+versus
+$$H_1: \neg H_0$$
+We have to partition the sum of squares, getting
+$$SSR(\beta_2|\beta_1, \beta_0)=SSR-SSR(\beta_1)=85.22992$$
+$$MSE=6.795526$$
+So we get $F=\frac{SSR(\beta_2|\beta_1, \beta_0)}{MSE}=12.54206$.
+
+We reject $H_0$ at the 5% level, if $F>F_{0.05, 1, 29}=4.182964$. So we reject $H_0$. We conclude, that a difference of $\beta_2=4.86706$ in the intercept is significant at the 5% level.
+
+
+b) We want to modify our original model to include an interaction between engine displacement and type of transmission, resulting in the equation
+$$y_i=\beta_0+\beta_1x_{1_i}+\beta_2x_{2_i}+\beta_{12}x_{1_i}x_{2_i}+\epsilon_i$$
+
+From R, the estimated regression equation is
+$$\hat{y}=26.43716-0.02781x_1+9.93213x_2-0.02392x_1x_2$$
+or, simplified:
+
+\begin{equation}
+   \hat{y}=\begin{cases}
+     26.43716-0.02781x_1, & \text{if $x_2=0$}.\\
+     (26.43716+9.93213)+(-0.02781-0.02392)x_1, & \text{if $x_2=1$}.
+   \end{cases}
+\end{equation}
+
+In conclusion, the type of transmission has a large effect on the gasoline mileage, since it increases the intercept by a factor of about 1.375 and almost doubles the slope in absolute value if the transmission type is 1, compared to if it is 0.
